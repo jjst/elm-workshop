@@ -1,14 +1,9 @@
+module Light exposing (..)
+
 import Html exposing (Html, div)
 import Html.Attributes exposing (style)
 import Html.Events exposing (onClick)
-import Html.App as App
 
-main =
-    App.beginnerProgram
-        { model = init
-        , update = update
-        , view = view
-        }
 
 -- MODEL
 
