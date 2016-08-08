@@ -4,14 +4,46 @@ import Html.Events exposing (onClick)
 import Html.App as App
 
 main =
+    App.beginnerProgram
+        { model = init
+        , update = update
+        , view = view
+        }
+
+-- MODEL
+
+type Model = On | Off
+
+init : Model
+init = Off
+
+-- UPDATE
+
+type Msg
+    = Toggle
+
+update : Msg -> Model -> Model
+update message model =
+    case model of
+        On -> Off
+        Off -> On
+
+-- VIEW
+
+view : Model -> Html Msg
+view model =
     let
+        color =
+            case model of
+                On -> "yellow"
+                Off -> "grey"
         divStyle =
             style
                 [ ("height", "100px")
                 , ("width", "100px")
                 , ("margin", "5px")
                 , ("border-radius", "15%")
-                , ("background-color", "yellow")
+                , ("background-color", color)
                 ]
     in
-       div [ divStyle ] []
+       div [ divStyle, onClick Toggle ] []
