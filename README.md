@@ -149,11 +149,51 @@ view model =
        div [ divStyle, onClick Toggle ] []
 ```
 
+Reload `Light.elm` in your browser and try clicking on it.
+
 ## Stage 3. Scaling it up...
 
+Our light works and can toggle on and off. Now we want to render a 5x5 board of 'em!
 
+To do this we're going to nest components. Our Light works well on its own, and a key component of the Elm architecture is to reuse existing components by nesting them.
+
+First, open `Light.elm` and add the following right on top:
+
+```elm
+module Light exposing (..)
+```
+
+This is saying that Light is now a module, and that we expose all functions and values in there. You can also remove the main function as we won't need it anymore.
+
+Open `Board.elm`
 
 ## Stage 4. Toggling neighbors
+
+OK, we have a board full of lights that we can toggle. All that's left to do is to make all of a light's neighbors toggle at the same time!
+
+Add the following functions to the model to determine the neighbors of a Light:
+
+```elm
+neighbors : Coords -> List Coords
+neighbors (i, j) = [ (i, j), (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1) ]
+```
+
+Then, update the update function like so:
+
+```elm
+update : Msg -> Model -> Model
+update message model =
+    case message of
+        ToggleAt toggleCoords lightMessage ->
+            indexedMap (\ coords cellModel ->
+                if List.member coords (neighbors toggleCoords) then
+                    (Light.update lightMessage cellModel)
+                else
+                    cellModel
+            ) model
+```
+
+Refresh `Board.elm` in your browser. Everything should work! 
 
 ## Going further
 
