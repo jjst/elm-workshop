@@ -165,7 +165,78 @@ module Light exposing (..)
 
 This is saying that Light is now a module, and that we expose all functions and values in there. You can also remove the main function as we won't need it anymore.
 
-Open `Board.elm`
+Open `Board.elm`. 
+
+Let's start by adding our Model, which is going to be a list of list of Lights:
+
+```elm
+type alias Model = List (List Light.Model)
+
+type alias Coords = (Int, Int)
+```
+
+We're also declaring a type alias for 2 dimensional coords as this will come in handy for a bunch of functions.
+
+Add an init function to initialise our Board to every light off:
+
+```elm
+init : Model
+init =
+    Light.init
+        |> List.repeat 5
+        |> List.repeat 5
+
+```
+
+And a helper function that's going to come handy, don't worry about it for now:
+
+```elm
+indexedMap : (Coords -> a -> b) -> List (List a) -> List (List b)
+indexedMap f board =
+    board
+        |> List.indexedMap (\ i row -> row |> List.indexedMap (\ j cellModel -> f (i, j) cellModel))
+```
+
+For update, we're (again) going to have a single type of message, which we're going to call `ToggleAt`. However, this time we'll need to pass in the coordinates of which Light was toggled, because we have a lot of them!
+
+```elm
+type Msg
+    = ToggleAt Coords Light.Msg
+```
+
+Our update function looks like this:
+
+```elm
+update : Msg -> Model -> Model
+update message model =
+    case message of
+        ToggleAt toggleCoords lightMessage ->
+            indexedMap (\ coords cellModel ->
+                if List.member coords (neighbors toggleCoords) then
+                    (Light.update lightMessage cellModel)
+                else
+                    cellModel
+            ) model
+```
+
+And in view:
+
+```elm
+view :  Model -> Html Msg
+view model =
+    let
+        rows = List.indexedMap
+                (\i row -> tr [] (row |> List.indexedMap (\j cellModel -> td [] [ (renderLight (i, j) cellModel) ])))
+                model
+    in
+       table [] rows
+
+renderLight : Coords -> Light.Model -> Html Msg
+renderLight (i,j) cellModel =
+    cellModel
+        |> Light.view
+        |> App.map (ToggleAt (i, j))
+```
 
 ## Stage 4. Toggling neighbors
 
