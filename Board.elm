@@ -29,6 +29,9 @@ indexedMap f board =
     board
         |> List.indexedMap (\ i row -> row |> List.indexedMap (\ j cellModel -> f (i, j) cellModel))
 
+neighbors : Coords -> List Coords
+neighbors (i, j) = [ (i, j), (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1) ]
+
 
 -- UPDATE
 
@@ -40,7 +43,7 @@ update message model =
     case message of
         ToggleAt toggleCoords lightMessage ->
             indexedMap (\ coords cellModel ->
-                if coords == toggleCoords then
+                if List.member coords (neighbors toggleCoords) then
                     (Light.update lightMessage cellModel)
                 else
                     cellModel
