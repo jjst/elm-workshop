@@ -268,4 +268,7 @@ Refresh `Board.elm` in your browser. Everything should work!
 
 ## Going further
 
-Here are a bunch of suggestions 
+* Add randomness to initialise the board
+* Add timing
+* Check out https://github.com/mariellefoster/lightsout for ideas
+* Follow the elm guide at http://guide.elm-lang.org/
